@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOJO - miesto, kde sa praktikuje cesta</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        :root {
+            --color-primary: #2a4365;
+            --color-primary-light: #3c6997;
+            --color-primary-dark: #1a365d;
+            --color-secondary: #90cdf4;
+            --color-light: #f7f9fb;
+            --color-dark: #0f2942;
+            --color-gray: #adb5bd;
+        }
+        
+        .light {
+            --bg-primary: var(--color-light);
+            --bg-secondary: #f0f4f1;
+            --text-primary: var(--color-dark);
+            --text-secondary: #495057;
+            --accent: var(--color-primary);
+        }
+        
+        .dark {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #f8f9fa;
+            --text-secondary: #ced4da;
+            --accent: var(--color-secondary);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 250px;
+            background-color: var(--bg-secondary);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/api/placeholder/1600/800');
+            background-size: cover;
+            background-position: center;
+            height: 70vh;
+        }
+        
+        .dark .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/api/placeholder/1600/800');
+        }
+        
+        /* Hamburger menu */
+        .hamburger {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            transition: all 0.25s;
+            position: relative;
+        }
+        
+        .hamburger-top,
+        .hamburger-middle,
+        .hamburger-bottom {
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            top: 0;
+            left: 0;
+            background: var(--text-primary);
+            transform: rotate(0);
+            transition: all 0.5s;
+        }
+        
+        .hamburger-middle {
+            transform: translateY(7px);
+        }
+        
+        .hamburger-bottom {
+            transform: translateY(14px);
+        }
+        
+        .open .hamburger-top {
+            transform: rotate(45deg) translateY(6px) translateX(6px);
+        }
+        
+        .open .hamburger-middle {
+            display: none;
+        }
+        
+        .open .hamburger-bottom {
+            transform: rotate(-45deg) translateY(6px) translateX(-6px);
+        }
+        
+        /* Custom styles */
+        .border-accent {
+            border-color: var(--accent);
+        }
+        
+        .text-accent {
+            color: var(--accent);
+        }
+        
+        .bg-accent {
+            background-color: var(--accent);
+        }
+        
+        .program-card {
+            transition: all 0.3s ease;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--color-primary);
+        }
+        
+        .dark .logo svg {
+            fill: var(--color-secondary);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-secondary);
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 40;
+            display: none;
+        }
+
+        .mobile-menu.is-active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="fixed w-full bg-opacity-90 bg-cyan-900 dark:bg-opacity-90 dark:bg-gray-900 shadow-md z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <a href="#" class="logo flex items-center space-x-2">
+                    <img src="images/dojo.png" alt="Logo" class="rounded-full h-10 w-10">
+                    <span class="text-2xl font-bold text-white dark:text-white">DOJO</span>
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-6">
+                    <div class="nav-item">
+                        <a href="#" class="text-white hover:text-green-700 dark:text-gray-300 dark:hover:text-green-400">O nás</a>
+                        <div class="dropdown-menu p-3 mt-1">
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Logo panáčik :-) </a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Elias Bohunický</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Stanley Valášek</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Dory Zachová</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Lukas Steis</a>
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="text-white hover:text-green-700 dark:text-gray-300 dark:hover:text-green-400">Programy</a>
+                        <div class="dropdown-menu p-3 mt-1">
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">KungFu Panda tréningy</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Poznaj ako potrebuješ byť chránená</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Mužské kruhy</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Ženské kruhy</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Zmiešané kruhy</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Víkendové výpravy</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Ja a môj meč</a>
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="text-white hover:text-green-700 dark:text-gray-300 dark:hover:text-green-400">Individuálne služby</a>
+                        <div class="dropdown-menu p-3 mt-1">
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Pilates</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Masáže</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Koučing</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Mentoring</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Príprava na prijímačky</a>
+                            <a href="#" class="block py-2 px-3 hover:bg-green-100 dark:hover:bg-green-900 rounded">Osobné konzultácie</a>
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="text-white hover:text-green-700 dark:text-gray-300 dark:hover:text-green-400">Fotogaléria</a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="text-white hover:text-green-700 dark:text-gray-300 dark:hover:text-green-400">Kontakt</a>
+                    </div>
+                </nav>
+                
+                <div class="flex items-center space-x-4">                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="md:hidden focus:outline-none" aria-label="Menu">
+                        <div class="hamburger">
+                            <span class="hamburger-top"></span>
+                            <span class="hamburger-middle"></span>
+                            <span class="hamburger-bottom"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu">
+            <a href="#" class="block py-3 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Hlavná stránka</a>
+            
+            <div class="mobile-submenu">
+                <div class="flex justify-between items-center py-3 px-4 text-gray-600 dark:text-gray-300 cursor-pointer">
+                    <span>O nás</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="hidden pl-6">
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Elias Bohunický</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Stanley Valášek</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Dory Zachová</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Lukas Steis</a>
+                </div>
+            </div>
+            
+            <a href="#" class="block py-3 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Kontakt a priestor</a>
+            
+            <div class="mobile-submenu">
+                <div class="flex justify-between items-center py-3 px-4 text-gray-600 dark:text-gray-300 cursor-pointer">
+                    <span>Priateľské kontakty</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="hidden pl-6">
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Európska asociácia životného prostredia</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Slovenská asociácia životného prostredia</a>
+                </div>
+            </div>
+            
+            <a href="#" class="block py-3 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Fotogaléria</a>
+            
+            <div class="mobile-submenu">
+                <div class="flex justify-between items-center py-3 px-4 text-gray-600 dark:text-gray-300 cursor-pointer">
+                    <span>Programy</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="hidden pl-6">
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">KungFu Panda tréningy</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Poznaj ako potrebuješ byť chránená</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Mužské kruhy</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Ženské kruhy</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Zmiešané kruhy</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Víkendové výpravy</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Ja a môj meč</a>
+                </div>
+            </div>
+            
+            <div class="mobile-submenu">
+                <div class="flex justify-between items-center py-3 px-4 text-gray-600 dark:text-gray-300 cursor-pointer">
+                    <span>Individuálne služby</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+                <div class="hidden pl-6">
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Pilates</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Masáže</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Koučing</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Mentoring</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Príprava na prijímačky</a>
+                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Osobné konzultácie</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="about" class="pt-20 bg-white dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+              <img src="images/dojo.png" alt="Dojo Image" width="460" height="480" class="rounded-full shadow-lg mb-6 mx-auto">
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-gradient-to-b from-cyan-900 via-cyan-700 to-cyan-500 dark:bg-gray-900">
+      <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto text-center">
+          <h2 class="text-5xl font-bold mb-8 text-gray-900 dark:text-white">Miesto, kde sa praktikuje Cesta</h2>
+          <div class="space-y-4 text-white dark:text-gray-300 text-xl">
+            <p>Cesta dovnútra a k sebe je zároveň cestou k blízkosti s inými.</p>
+            <p>Nedá sa oddeliť jedna od druhej.</p>
+            <p>Sú na sebe závislé, súčasné, vedúce k realite a skutočnosti.</p>
+            <p>Už sa nemusíme "liečiť", môžeme spolu rásť.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section class="py-16 bg-gray-100 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 text-center text-gray-800 dark:text-white">Naše programy</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Program Card 1 -->
+                <div class="program-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                    <div class="h-48 bg-cyan-900 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Mužské kruhy</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Priestor pre mužov, kde môžu zdieľať svoje skúsenosti, výzvy a rásť spoločne na svojej ceste.</p>
+                        <a href="#" class="inline-block mt-4 text-green-600 dark:text-green-400 font-semibold hover:underline">Zistiť viac →</a>
+                    </div>
+                </div>
+                
+                <!-- Program Card 2 -->
+                <div class="program-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                    <div class="h-48 bg-cyan-800 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Ženské kruhy</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Podporná komunita pre ženy, kde môžu zdieľať svoje príbehy, nadobudnúť silu a nachádzať spojenie.</p>
+                        <a href="#" class="inline-block mt-4 text-green-600 dark:text-green-400 font-semibold hover:underline">Zistiť viac →</a>
+                    </div>
+                </div>
+                
+                <!-- Program Card 3 -->
+                <div class="program-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                    <div class="h-48 bg-cyan-950 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">KungFu Panda tréningy</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Cvičenia inšpirované kungfu, ktoré kombinujú pohyb, koncentráciu a vnútornú silu pre všetky vekové kategórie.</p>
+                        <a href="#" class="inline-block mt-4 text-green-600 dark:text-green-400 font-semibold hover:underline">Zistiť viac →</a>
+                    </div>
+                </div>
+                
+                <!-- Program Card 4 -->
+                <div class="program-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                    <div class="h-48 bg-cyan-600 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Zmiešané kruhy</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Otvorený priestor pre všetkých, kde sa stretávame, komunikujeme a zdieľame svoje cesty v bezpečnom prostredí.</p>
+                        <a href="#" class="inline-block mt-4 text-green-600 dark:text-green-400 font-semibold hover:underline">Zistiť viac →</a>
+                    </div>
+                </div>
+                
+                <!-- Program Card 5 -->
+                <div class="program-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                    <div class="h-48 bg-cyan-800 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Víkendové výpravy</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Objavovanie prírody, seba samého a spojenie s ostatnými počas víkendových dobrodružstiev.</p>
+                        <a href="#" class="inline-block mt-4 text-green-600 dark:text-green-400 font-semibold hover:underline">Zistiť viac →</a>
+                    </div>
+                </div>
+                
+                <!-- Program Card 6 -->
+                <div class="program-card bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden">
+                    <div class="h-48 bg-cyan-600 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z"></path>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Ja a môj meč</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Tréning s mečom ako cesta k disciplíne, sebauvedomeniu a vnútornej sile.</p>
+                        <a href="#" class="inline-block mt-4 text-green-600 dark:text-green-400 font-semibold hover:underline">Zistiť viac →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#" class="btn-primary">Zobrazit všetky programy</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 text-center text-gray-800 dark:text-white">Individuálne služby</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Service 1 -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.758a1 1 0 01-.293.707l-4 4C.817 14.769 2.156 18 4.828 18h10.343c2.673 0 4.012-3.231 2.122-5.121l-4-4A1 1 0 0113 8.172V4.414l.707-.707A1 1 0 0013 2H7zm2 6.172V4h2v4.172a3 3 0 00.879 2.12l1.168 1.168a4 4 0 00-2.124.971l3.213 3.213c-1.022 1.022-2.165 1.165-3.44 1.389a4.99 4.99 0 01-1.362.183 4.992 4.992 0 01-1.362-.183c-1.275-.224-2.418-.367-3.44-1.389l3.213-3.213a4 4 0 00-2.124-.971l1.168-1.168A3 3 0 009 8.172z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Pilates</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Individuálne hodiny pilates zamerané na posilnenie tela, zlepšenie flexibility a vytvorenie rovnováhy.</p>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"></path>
+                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Koučing</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Osobný koučing, ktorý vám pomôže stanoviť ciele, prekonať prekážky a dosiahnuť svoj plný potenciál.</p>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Mentoring</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Podpora a vedenie od skúsených mentorov, ktorí vám pomôžu na vašej ceste osobného a profesionálneho rastu.</p>
+                </div>
+                
+                <!-- Service 4 -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Príprava na prijímačky</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Individuálna podpora pri príprave na prijímacie skúšky, ktorá vám pomôže dosiahnuť váš akademický cieľ.</p>
+                </div>
+                
+                <!-- Service 5 -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Masáže</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Relaxačné a terapeutické masáže pre uvoľnenie napätia a regeneráciu tela i mysle.</p>
+                </div>
+                
+                <!-- Service 6 -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">Osobné konzultácie</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Individuálne stretnutia zamerané na riešenie vašich konkrétnych potrieb, výziev a cieľov.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <!--<section class="py-16 bg-green-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Pripravený začať svoju cestu?</h2>
+            <p class="text-xl mb-8">Pridajte sa k našej komunite a objavte svoju vlastnú cestu rastu.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition duration-300">Kontaktujte nás</a>
+                <a href="#" class="border-2 border-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition duration-300">Zobraziť programy</a>
+            </div>
+        </div>
+    </section>-->
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Logo & Info -->
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="images/dojo.png" alt="Dojo Logo" class="rounded-full h-10 w-10 mr-2">
+                        <span class="text-2xl font-bold">DOJO</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Miesto, kde sa praktikuje Cesta</p>
+                    <p class="text-gray-400">Cesta dovnútra a k sebe je zároveň cestou k blízkosti s inými.</p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Rýchle odkazy</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">O nás</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Programy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Individuálne služby</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Kontakt</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Fotogaléria</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Kontaktné informácie</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Poľná 1, Bratislava, Slovensko</span>
+                        </li>
+                        <!--<li class="flex items-center text-gray-400">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                            </svg>
+                            <span>+421 123 456 789</span>
+                        </li>-->
+                        <li class="flex items-center text-gray-400">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                            </svg>
+                            <span>dojo.slovakia@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Social Links -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Sledujte nás</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/dojo.bratislava" class="bg-gray-700 hover:bg-green-600 h-10 w-10 rounded-full flex items-center justify-center transition duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path>
+                            </svg>
+                        </a>
+                        <a href="https://www.patreon.com/c/DOJOSlovakia" class="bg-gray-700 hover:bg-green-600 h-10 w-10 rounded-full flex items-center justify-center transition duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.82 2.41c3.96 0 7.18 3.22 7.18 7.18 0 3.96-3.22 7.18-7.18 7.18-3.96 0-7.18-3.22-7.18-7.18 0-3.96 3.22-7.18 7.18-7.18zM2 21.6h3.5V2.41H2V21.6z"></path>
+                            </svg>
+                        </a>
+                        <a href="https://www.youtube.com/@dojo.slovakia" class="bg-gray-700 hover:bg-green-600 h-10 w-10 rounded-full flex items-center justify-center transition duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="flex space-x-4 mt-4">
+                      Priateľské kontakty
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 DOJO. Všetky práva vyhradené.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileSubmenus = document.querySelectorAll('.mobile-submenu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenuButton.classList.toggle('open');
+                mobileMenu.classList.toggle('is-active');
+            });
+            
+            mobileSubmenus.forEach(submenu => {
+                const toggle = submenu.querySelector('div');
+                const menu = submenu.querySelector('div:last-child');
+                
+                toggle.addEventListener('click', function() {
+                    menu.classList.toggle('hidden');
+                    const icon = toggle.querySelector('svg');
+                    if (menu.classList.contains('hidden')) {
+                        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>';
+                    } else {
+                        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>';
+                    }
+                });
+            });
+            
+            // Sticky Header
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-cyan-900', 'dark:bg-gray-900');
+                    header.classList.remove('bg-opacity-90', 'dark:bg-opacity-90');
+                } else {
+                    header.classList.add('bg-opacity-90', 'dark:bg-opacity-90');
+                }
+            });
+        });
+    </script>
+</body
