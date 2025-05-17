@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="sk" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -101,7 +101,7 @@
             height: 2px;
             top: 0;
             left: 0;
-            background: var(--text-primary);
+            background: white;
             transform: rotate(0);
             transition: all 0.5s;
         }
@@ -234,7 +234,19 @@
                     </div>
                 </nav>
                 
-                <div class="flex items-center space-x-4">                    
+                <div class="flex items-center space-x-4">
+                    <!-- Updated Theme Toggle Button HTML -->
+                    <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 focus:outline-none">
+                        <!-- Moon icon (shows in dark mode) -->
+                        <svg id="moon" class="w-5 h-5 text-yellow-400 hidden dark:block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <!-- Sun icon (shows in light mode) -->
+                        <svg id="sun" class="w-5 h-5 text-yellow-500 block dark:hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+
                     <!-- Mobile Menu Button -->
                     <button id="mobile-menu-button" class="md:hidden focus:outline-none" aria-label="Menu">
                         <div class="hamburger">
@@ -248,8 +260,8 @@
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="mobile-menu">
-            <a href="#" class="block py-3 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-green-900 rounded">Hlavná stránka</a>
+        <div id="mobile-menu" class="mobile-menu bg-gradient-to-b from-cyan-900 via-cyan-700 to-cyan-500">
+            <a href="#" class="block py-3 px-4 text-gray-600 hover:bg-green-100 dark:text-gray-300 dark:hover:bg-cyan-950 rounded">Hlavná stránka</a>
             
             <div class="mobile-submenu">
                 <div class="flex justify-between items-center py-3 px-4 text-gray-600 dark:text-gray-300 cursor-pointer">
@@ -615,8 +627,8 @@
 
     <!-- JavaScript -->
     <script>
-        // Mobile Menu Toggle
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileSubmenus = document.querySelectorAll('.mobile-submenu');
@@ -641,6 +653,32 @@
                 });
             });
             
+            // Theme Toggle - Fixed version
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            
+            // Check for saved theme preference or use system preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.remove('light');
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+                html.classList.add('light');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    html.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    html.classList.remove('light');
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+
             // Sticky Header
             const header = document.querySelector('header');
             window.addEventListener('scroll', function() {
@@ -653,4 +691,5 @@
             });
         });
     </script>
-</body
+</body>
+</html>
