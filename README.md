@@ -1,6 +1,6 @@
 # dojo
 
-DOJO web site
+DOJO web site source files and assets.
 
 ## Used components
 
@@ -9,21 +9,27 @@ Pure HTML, Tailwind $ with a few CSS rules and a few lines of JavaScript for men
 ## How to set up a project
 
 Clone git repo
+
 Install python
+
 Install Tailwind. For example via [Standalone CLI: Use Tailwind CSS without Node.js](https://tailwindcss.com/blog/standalone-cli).
 
-# Example for macOS arm64
+**Example for macOS arm64**
+```bash
 curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64
 chmod +x tailwindcss-macos-arm64
-mv tailwindcss-macos-arm64 tailwindcss
+```
+
+*Note: Tailwind executable for macos is part of the repo and is used in `./scripts/publish.py` script. If use a diffrent Tailwind installation, update the script.*
+
+Install any lite web server. Eg: Live server in VS Studio and in Live Server settings set root to `/public`
+
+Set publish script as executable `chmod +x ./scripts/publish.py`
 
 ## How to start locally
 
-Use web server. Eg: Live server in VS Studio
-In Live Server settings set root to /public
+Start live web server
+
+Build all pages via `./scripts/publish.py`
+
 Access page on http://127.0.0.1:5500
-
-### How to publish a page
-
-chmod +x ./scripts/publish.py
-./scripts/publish.py

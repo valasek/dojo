@@ -1,0 +1,8 @@
+# Ignore everything in public directory
+/public/*
+
+# But keep the .keep file
+!/public/.keep
+
+# Ignore tailwind cli
+tailwindcss-macos-arm64

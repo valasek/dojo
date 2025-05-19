@@ -4,15 +4,17 @@ publish.py - Website publishing script
 
 This script prepares website files for publishing by:
 1. Cleaning the public directory
-2. Copying assets and images directories
-3. Processing HTML files with included partials
-4. Skipping blacklisted files
+2. Build Tailwind CSS
+3. Copying assets and images directories
+4. Processing HTML files with included partials
+5. Skipping blacklisted files
 
 Usage: python scripts/publish.py
 """
 
 import shutil
 from pathlib import Path
+import subprocess
 
 
 class Publisher:
@@ -50,7 +52,7 @@ class Publisher:
         else:
             self.public_dir.mkdir(parents=True)
 
-        print(f"✅ Cleaned public directory: {self.public_dir}")
+        print(f"✓ Cleaned public directory: {self.public_dir}")
 
     def copy_folders_to_public(self):
         """Copy specified folders to the public directory."""
@@ -62,7 +64,7 @@ class Publisher:
                 if dest_path.exists():
                     shutil.rmtree(dest_path)
                 shutil.copytree(src_path, dest_path)
-                print(f"✅ Copied folder: {folder}/")
+                print(f"✓ Copied folder: {folder}/")
             else:
                 print(f"⚠️ Warning: Source folder not found: {folder}/")
 
@@ -94,22 +96,43 @@ class Publisher:
         with open(dest_path, 'w', encoding='utf-8') as file:
             file.write(content)
 
-        print(f"✅ Processed HTML file: {file_path.name}")
+        print(f"✓ Processed HTML file: {file_path.name}")
 
     def copy_html_files(self):
         """Copy and process HTML files to the public directory."""
         for file_path in self.base_dir.glob("*.html"):
             if file_path.name in self.blacklist:
-                print(f"✅ Skipped blacklisted file: {file_path.name}")
+                print(f"⊘ Skipped blacklisted file: {file_path.name}")
                 continue
 
             self.process_html_file(file_path)
+
+    def build_tailwind_css(self):
+        """Build Tailwind CSS from source to minified version."""
+        tailwind_cmd = "./tailwindcss-macos-arm64"
+        input_css = "./assets/tailwind.css"
+        output_css = "./assets/tailwind-min.css"
+
+        try:
+            result = subprocess.run(
+                [tailwind_cmd, "-i", input_css, "-o", output_css],
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            print(f"✓ Built Tailwind CSS: {output_css}")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Error building Tailwind CSS: {e}")
+            print(f"Error output: {e.stderr}")
+        except FileNotFoundError:
+            print(f"❌ Error: Tailwind CSS executable not found: {tailwind_cmd}")
 
     def publish(self):
         """Run the complete publishing process."""
         print("\n📦 Starting website publishing process...\n")
 
         self.clean_public_dir()
+        self.build_tailwind_css()
         self.copy_folders_to_public()
         self.copy_html_files()
 
