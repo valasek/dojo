@@ -28,6 +28,9 @@ class Publisher:
         # Folders to copy entirely
         self.copy_folders = ["assets", "images"]
 
+        # Files to preserve in public directory during cleanup
+        self.cleanup_blacklist = [".keep"]
+
         # Files to skip (blacklist)
         self.blacklist = ["README.md", "LICENCE", "_template.html"]
 
@@ -45,6 +48,10 @@ class Publisher:
         """Delete all files and folders in the public directory."""
         if self.public_dir.exists():
             for item in self.public_dir.iterdir():
+                # Check if item should be preserved
+                if item.name in self.cleanup_blacklist:
+                    print(f"⊘ Skipped blacklisted file: {item.name} in {self.public_dir} folder")
+                    continue
                 if item.is_dir():
                     shutil.rmtree(item)
                 else:
