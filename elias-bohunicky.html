@@ -80,13 +80,13 @@
             <!-- Vycentrované tlačítka -->
             <div class="flex justify-center gap-4 mb-8">
                 <div class="w-48">
-                    <button onclick="showContent('cesta')" id="btn-cesta"
+                    <button id="btn-cesta"
                         class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-center">
                         Moja cesta
                     </button>
                 </div>
                 <div class="w-48">
-                    <button onclick="showContent('cv')" id="btn-cv"
+                    <button id="btn-cv"
                         class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-center">
                         CV
                     </button>
@@ -132,33 +132,22 @@
                         Dali sme sa do kopy a — vďaka tomu čítate tieto riadky .<br/>
                         <br/>
                         Prajem vám všetkým naplnený efektívny čas pri čítaní a pozeraní našich príspevkov a teším sa na vás na našich kurzoch, či výcvikoch.<br/>
-                        ￼<br/>
-                        Bojové umenia a “UnShaming — OdHanbovanie”<br/>
+                        <br/>
                         Nemám vyhranené náboženstvo alebo filozofiu, verím v život, prírodu a to väčšie, čo nás všetkých vedie. Verím v preberanie vlastnej zodpovednosti za svoj Život a schopnosti nastaviť hranice tomu, čo do môjho života nepatrí. Verím a žijem to, že ak nasadnem na vlnu Života a idem s ňou, je v mojom živote viacej života.<br/>
                         Mám k tomu takú “hlášku”: Žiť život živo.<br/>
+                        <br/>
                         Je toľko vecí v živote a vesmíre, že ma ani nenapadne hovoriť niekomu, čo je lepšie a čo horšie. Z toho čo je bežne známe vo svete ako “náuky” či filozofia ma zrejme najviac inšpiruje taoizmus a šamanizmus. A popri tom si beriem všetko užitočné i z iných učení či filozofií, vrátane kresťanstva.<br/>
+                        <br/>
                         Milujem turistiku, bytie v prírode, dobrú knihu i čas s inšpiratívnymi ľuďmi či mojou skupinou „DOJO“ a ľuďmi na kurzoch či výcvikoch. Stále sa vzdelávam, podľa chuti a potreby. V 2022-2024 som si po 10 rokoch praktikovania konštelácií dokončil certifikát v 2-ročnom výcviku systemických konštelácií. A koncom roka 2024 som vstúpil do ročného nadstavbového výcviku u Mira Hajduka.<br/>
                     </p>
                 </div>
             </div>
 
             <div id="content-cv" class="hidden max-w-6xl mx-auto text-black dark:text-white">
-                <h2 class="text-2xl font-semibold text-cyan-800 dark:text-cyan-400 pb-8">CV</h2>
+                <h2 class="text-2xl font-semibold text-cyan-800 dark:text-cyan-400 pb-8">Curriculum Vitae — Elias Bohunický</h2>
                 <div class="">
                     <p>
-                        Moje CV si môžete pozrieť tu:<br/>
-                        <br/>
-                        Curriculum Vitae — Elias Bohunický<br/>
-                        <br/>
-                        Vzdelanie:<br/>
-                        <br/>
-                        1984-1986 : ZŠ Riazanská, Bratislava<br/>
-                        1986-1992 : Základ. jazyková škola E. Thälmanna, Bratislava<br/>
-                        1992-1999 : SPŠ Chemická, Račianska 78, Bratislava<br/>
-                        2000—2004 : Súkromné gymnázium Kremnická, Bratislava (ukončené maturitou)<br/>
-                        <br/>
-                        Kurzy a tréningy:<br/>
-                        <br/>
+                        <h2 class="text-xl font-semibold text-cyan-800 dark:text-cyan-400 pb-8">Kurzy a tréningy</h2>
                         1988 — 1996: tréning v systéme Okinawského Karate a Kobudo systému<br/>
                         1993-1996  inštruktor  karate <br/>
                         1991- 2017: štúdium budžutsu — bojové tai-chi; prežitia v prírode<br/>
@@ -232,8 +221,7 @@
                         2021-2024 — dvojročný terapeutický výcvik systemických konštelácií (CZ)<br/>
                         2024 — súčasnosť — nadstvbový výcvik systemických konštelácií (M. Hajduk, CZ)<br/>
                         <br/>
-                        Pracovné skúsenosti:<br/>
-                        <br/>
+                        <h2 class="text-xl font-semibold text-cyan-800 dark:text-cyan-400 pb-8">Pracovné skúsenosti</h2>
                         1994-1996: detský vedúci v detskom rekreačnom tábore<br/>
                         1995-1996: Bezpečnostná agentúra Saifa s.r.o. — ochrana objektov a osôb<br/>
                         1994-2011: inštruktor sebaobrany<br/>
@@ -259,30 +247,6 @@
             </div>
         </div>
     </section>
-    <script>
-        let activeContent = null;
-
-        function showContent(section) {
-            // Skryť všetky obsahy
-            document.getElementById('content-cesta').classList.add('hidden');
-            document.getElementById('content-cv').classList.add('hidden');
-            
-            // Resetovať štýly tlačítok
-            document.getElementById('btn-cesta').classList.remove('ring-4', 'ring-blue-300');
-            document.getElementById('btn-cv').classList.remove('ring-4', 'ring-blue-300');
-            
-            // Ak je kliknuté rovnaké tlačítko, len ho skryť
-            if (activeContent === section) {
-                activeContent = null;
-                return;
-            }
-            
-            // Zobraziť vybraný obsah
-            document.getElementById('content-' + section).classList.remove('hidden');
-            document.getElementById('btn-' + section).classList.add('ring-4', 'ring-blue-300');
-            activeContent = section;
-        }
-    </script>
 
     <!-- Footer -->
     <div id="footer-container"></div>

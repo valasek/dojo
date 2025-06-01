@@ -60,4 +60,54 @@ document.addEventListener('DOMContentLoaded', function() {
             header.classList.add('bg-opacity-90', 'dark:bg-opacity-90');
         }
     });
+
+    // Content Toggle Functionality for Moja cesta and CV
+    let activeContent = null;
+
+    function showContent(section) {
+        // Hide all contents
+        const contentCesta = document.getElementById('content-cesta');
+        const contentCv = document.getElementById('content-cv');
+        
+        if (contentCesta) contentCesta.classList.add('hidden');
+        if (contentCv) contentCv.classList.add('hidden');
+        
+        // Reset button styles
+        const btnCesta = document.getElementById('btn-cesta');
+        const btnCv = document.getElementById('btn-cv');
+        
+        if (btnCesta) btnCesta.classList.remove('ring-4', 'ring-blue-300');
+        if (btnCv) btnCv.classList.remove('ring-4', 'ring-blue-300');
+        
+        // If the same button is clicked, just hide it
+        if (activeContent === section) {
+            activeContent = null;
+            return;
+        }
+        
+        // Show selected content
+        const selectedContent = document.getElementById('content-' + section);
+        const selectedButton = document.getElementById('btn-' + section);
+        
+        if (selectedContent) selectedContent.classList.remove('hidden');
+        if (selectedButton) selectedButton.classList.add('ring-4', 'ring-blue-300');
+        
+        activeContent = section;
+    }
+
+    // Add event listeners for buttons
+    const btnCesta = document.getElementById('btn-cesta');
+    const btnCv = document.getElementById('btn-cv');
+    
+    if (btnCesta) {
+        btnCesta.addEventListener('click', function() {
+            showContent('cesta');
+        });
+    }
+    
+    if (btnCv) {
+        btnCv.addEventListener('click', function() {
+            showContent('cv');
+        });
+    }
 });
