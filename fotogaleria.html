@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sk" class="light">
+<head></head>
+<body>
+    <!-- Header & Navigation -->
+    <div id="header-container"></div>
+
+    <!-- Contact Banner -->
+    <section class="pt-32 bg-gradient-to-b from-cyan-900 via-cyan-700 to-cyan-500 dark:bg-gray-900">
+        <div class="container mx-auto px-4 py-12">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-5xl font-bold mb-6 text-white dark:text-white">Fotogaléria</h1>
+                <p class="text-xl text-white dark:text-gray-300"></p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto text-black dark:text-white">
+                <!-- Galéria náhľadov -->
+    <div id="gallery" class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Obrázok 1 -->
+            <div class="group cursor-pointer transition-transform hover:scale-105" onclick="openModal('./images/fotogaleria/NasaStvorka.jpeg')">
+                <div class="aspect-square overflow-hidden rounded-lg shadow-md">
+                    <img src="./images/fotogaleria/NasaStvorka.jpeg" alt="Obrázok 1" class="w-full h-full object-cover group-hover:brightness-110 transition-all">
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+
+    <!-- Modal pre zväčšený obrázok -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 hidden">
+        <div class="relative w-full h-full flex items-center justify-center p-4">
+            <!-- Tlačidlo na zatvorenie -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center">
+                ×
+            </button>
+            
+            <!-- Zväčšený obrázok -->
+            <img id="modalImage" src="" alt="Zväčšený obrázok" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" style="display: none;" onclick="event.stopPropagation();">
+        </div>
+    </div>
+
+    <script>
+        function openModal(imageSrc) {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modalImage');
+            
+            // Najprv načítame obrázok
+            const img = new Image();
+            img.onload = function() {
+                modalImage.src = imageSrc;
+                modalImage.style.display = 'block';
+                modal.classList.remove('hidden');
+                // Zablokuje skrolovanie stránky
+                document.body.style.overflow = 'hidden';
+            };
+            img.src = imageSrc;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modal.classList.add('hidden');
+            modalImage.style.display = 'none';
+            
+            // Obnoví skrolovanie stránky
+            document.body.style.overflow = 'auto';
+        }
+
+        // Zatvorenie modalu klávesou Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Zatvorenie modalu kliknutím na pozadie
+        // Zatvorenie modalu kliknutím kdekoľvek na modal
+        document.getElementById('modal').addEventListener('click', function(event) {
+            closeModal();
+        });
+    </script>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+</body>
+</html>
