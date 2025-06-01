@@ -45,7 +45,7 @@ body {
     top: 100%;
     left: 0;
     min-width: 250px;
-    background-image: linear-gradient(to bottom, #1c6681, #1289a9, #06b6d4);
+    background-image: linear-gradient(to bottom, #164e63, #0e7490, #06b6d4);
     border-radius: 0.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 50;
