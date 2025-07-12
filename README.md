@@ -26,6 +26,17 @@ Install any lite web server. Eg: Live server in VS Studio and in Live Server set
 
 Set publish script as executable `chmod +x ./scripts/publish.py`
 
+## Optimaze images
+
+# Simple - process everything with defaults
+./scripts/optimize.sh
+
+# Custom quality (75 = smaller files)
+./scripts/optimize.sh "" "" 75
+
+# Different input folder
+./scripts/optimize.sh /path/to/other/images
+
 ## How to start locally
 
 Start live web server

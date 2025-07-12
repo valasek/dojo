@@ -1,0 +1,11 @@
+[project]
+name = "image-optimizer"
+version = "1.0.0"
+description = "Web image optimization tool"
+dependencies = [
+    "Pillow>=10.0.0",
+    "pillow-heif>=0.13.0",
+]
+
+[project.scripts]
+optimize-images = "image_optimizer:main"
