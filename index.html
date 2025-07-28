@@ -35,7 +35,7 @@
     <section class="py-16 bg-white dark:bg-gray-900">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold mb-12 text-center text-gray-800 dark:text-white">Programy</h2>
-            <div id="content" class="animate-pulse text-center ">Loading programs...</div>
+            <div id="content" class="text-left leading-relaxed text-gray-700 dark:text-gray-300">Loading programs...</div>
             </div>
         </div>
     </section>
@@ -115,7 +115,7 @@
                 const data = await response.json();
                 
                 if (!data.content) {
-                    contentDiv.innerHTML = '<div class="no-content">No programs at the moment</div>';
+                    contentDiv.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">Programy momentálne pripravujeme ...</div>';
                     return;
                 }
                 
@@ -123,7 +123,7 @@
                 
             } catch (error) {
                 console.error('Error fetching content:', error);
-                contentDiv.innerHTML = '<div class="no-content">No programs at the moment</div>';
+                contentDiv.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">Programy momentálne pripravujeme ...</div>';
             }
         }
         
