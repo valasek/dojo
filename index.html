@@ -126,6 +126,13 @@
                 links.forEach(link => {
                     link.classList.add('text-cyan-600', 'hover:underline', 'dark:text-cyan-500');
                 });
+
+                // Add spacing after br tags
+                const brTags = contentDiv.querySelectorAll('br');
+                brTags.forEach(br => {
+                    br.style.marginBottom = '1rem';
+                    br.style.display = 'block';
+                });
                 
             } catch (error) {
                 console.error('Error fetching content:', error);
