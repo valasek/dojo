@@ -127,12 +127,14 @@
                     link.classList.add('text-cyan-600', 'hover:underline', 'dark:text-cyan-500');
                 });
 
-                // Add Tailwind classes to br tags for spacing
+                // Insert spacing divs after each br tag
                 const brTags = contentDiv.querySelectorAll('br');
                 brTags.forEach(br => {
-                    br.classList.add('block', 'mb-4');
+                    const spacingDiv = document.createElement('div');
+                    spacingDiv.classList.add('mb-6');
+                    br.parentNode.insertBefore(spacingDiv, br.nextSibling);
                 });
-                
+
             } catch (error) {
                 console.error('Error fetching content:', error);
                 contentDiv.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">Programy momentálne pripravujeme ...</div>';
