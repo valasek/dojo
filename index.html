@@ -127,11 +127,10 @@
                     link.classList.add('text-cyan-600', 'hover:underline', 'dark:text-cyan-500');
                 });
 
-                // Add spacing after br tags
+                // Add Tailwind classes to br tags for spacing
                 const brTags = contentDiv.querySelectorAll('br');
                 brTags.forEach(br => {
-                    br.style.marginBottom = '1rem';
-                    br.style.display = 'block';
+                    br.classList.add('block', 'mb-4');
                 });
                 
             } catch (error) {
