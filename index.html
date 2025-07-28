@@ -119,22 +119,34 @@
                     return;
                 }
                 
-                contentDiv.innerHTML = `<div class="post-content">${data.content}</div>`;
-
-                // Style all links with Tailwind classes
+                // Process the HTML content
+                let processedContent = data.content;
+                
+                // 1. Remove blacklisted tags (br, p) - both opening and closing
+                const blacklist = ['br', 'p'];
+                blacklist.forEach(tag => {
+                    const regex = new RegExp(`<\\/?${tag}[^>]*>`, 'gi');
+                    processedContent = processedContent.replace(regex, '');
+                });
+                
+                // 2. Keep only whitelisted tags (a, strong, em) - remove all others
+                const whitelist = ['a', 'strong', 'em'];
+                const whitelistPattern = whitelist.join('|');
+                const removeUnwantedTags = new RegExp(`<(?!\\/?(${whitelistPattern})(?:\\s|>))[^>]+>`, 'gi');
+                processedContent = processedContent.replace(removeUnwantedTags, '');
+                
+                // 3. Replace \n characters with spacing divs
+                processedContent = processedContent.replace(/\n/g, '<div class="mb-6"></div>');
+                
+                // Insert processed content
+                contentDiv.innerHTML = `<div class="post-content">${processedContent}</div>`;
+                
+                // Style all links
                 const links = contentDiv.querySelectorAll('a');
                 links.forEach(link => {
                     link.classList.add('text-cyan-600', 'hover:underline', 'dark:text-cyan-500');
                 });
-
-                // Insert spacing divs after each br tag
-                const brTags = contentDiv.querySelectorAll('br');
-                brTags.forEach(br => {
-                    const spacingDiv = document.createElement('div');
-                    spacingDiv.classList.add('mb-6');
-                    br.parentNode.insertBefore(spacingDiv, br.nextSibling);
-                });
-
+                
             } catch (error) {
                 console.error('Error fetching content:', error);
                 contentDiv.innerHTML = '<div class="text-center text-gray-500 text-lg py-10">Programy momentálne pripravujeme ...</div>';
